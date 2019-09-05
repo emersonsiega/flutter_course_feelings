@@ -1,0 +1,1 @@
+enum TipoSentimento { FELIZ, NORMAL, INDIFERENTE, TRISTE, RAIVA }
