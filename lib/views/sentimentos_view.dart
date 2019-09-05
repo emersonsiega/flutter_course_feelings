@@ -1,6 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_course_feelings/model/sentimento.dart';
+import 'package:flutter_course_feelings/model/tipo_sentimento.dart';
+import 'package:flutter_course_feelings/widgets/sentimento_tile.dart';
 
 class SentimentosView extends StatelessWidget {
+  final List<Sentimento> _sentimentos = [
+    Sentimento(
+      tipoSentimento: TipoSentimento.FELIZ,
+      pensamentos: "Estou feliz porque...",
+    ),
+    Sentimento(
+      tipoSentimento: TipoSentimento.INDIFERENTE,
+      pensamentos: "Estou indiferente porque...",
+    ),
+    Sentimento(
+      tipoSentimento: TipoSentimento.NORMAL,
+      pensamentos: "Estou normal porque...",
+    ),
+    Sentimento(
+      tipoSentimento: TipoSentimento.TRISTE,
+      pensamentos: "Estou triste porque...",
+    ),
+    Sentimento(
+      tipoSentimento: TipoSentimento.RAIVA,
+      pensamentos: "Estou com raiva porque...",
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,7 +36,11 @@ class SentimentosView extends StatelessWidget {
       body: Container(
         child: ListView(
           padding: EdgeInsets.symmetric(vertical: 32, horizontal: 16),
-          children: <Widget>[],
+          children: _sentimentos
+              .map((sentimento) => SentimentoTile(
+                    sentimento: sentimento,
+                  ))
+              .toList(),
         ),
       ),
       floatingActionButton: FloatingActionButton(
