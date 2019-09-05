@@ -1,31 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course_feelings/model/sentimento.dart';
-import 'package:flutter_course_feelings/model/tipo_sentimento.dart';
 import 'package:flutter_course_feelings/widgets/sentimento_tile.dart';
 
-class SentimentosView extends StatelessWidget {
-  final List<Sentimento> _sentimentos = [
-    Sentimento(
-      tipoSentimento: TipoSentimento.FELIZ,
-      pensamentos: "Estou feliz porque...",
-    ),
-    Sentimento(
-      tipoSentimento: TipoSentimento.INDIFERENTE,
-      pensamentos: "Estou indiferente porque...",
-    ),
-    Sentimento(
-      tipoSentimento: TipoSentimento.NORMAL,
-      pensamentos: "Estou normal porque...",
-    ),
-    Sentimento(
-      tipoSentimento: TipoSentimento.TRISTE,
-      pensamentos: "Estou triste porque...",
-    ),
-    Sentimento(
-      tipoSentimento: TipoSentimento.RAIVA,
-      pensamentos: "Estou com raiva porque...",
-    ),
-  ];
+class SentimentosView extends StatefulWidget {
+  @override
+  _SentimentosViewState createState() => _SentimentosViewState();
+}
+
+class _SentimentosViewState extends State<SentimentosView> {
+  List<Sentimento> _sentimentos = [];
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +19,19 @@ class SentimentosView extends StatelessWidget {
       body: Container(
         child: ListView(
           padding: EdgeInsets.symmetric(vertical: 32, horizontal: 16),
-          children: _sentimentos
-              .map((sentimento) => SentimentoTile(
-                    sentimento: sentimento,
-                  ))
-              .toList(),
+          children: _sentimentos.isEmpty
+              ? [
+                  Text(
+                    "Nenhum sentimento anotado",
+                    style: Theme.of(context).textTheme.display1,
+                    textAlign: TextAlign.center,
+                  )
+                ]
+              : _sentimentos
+                  .map((sentimento) => SentimentoTile(
+                        sentimento: sentimento,
+                      ))
+                  .toList(),
         ),
       ),
       floatingActionButton: FloatingActionButton(
