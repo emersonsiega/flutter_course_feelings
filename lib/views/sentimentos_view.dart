@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course_feelings/model/sentimento.dart';
+import 'package:flutter_course_feelings/views/adicionar/adicionar_sentimento.dart';
 import 'package:flutter_course_feelings/widgets/sentimento_tile.dart';
 
 class SentimentosView extends StatefulWidget {
@@ -56,11 +57,26 @@ class _SentimentosViewState extends State<SentimentosView> {
     );
   }
 
+  void _insertSentimento(Sentimento sentimento) {
+    setState(() {
+      _sentimentos.add(sentimento);
+    });
+  }
+
   void _addSentimento() {
-    //Adicionar sentimentos...
+    //Chama página para criar um Sentimento e envia o método de adicionar sentimentos...
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AdicionarSentimento(
+          addSentimento: _insertSentimento,
+        ),
+      ),
+    );
   }
 
   void _removeSentimento() {
-    //Remover sentimentos
+    setState(() {
+      _sentimentos = [];
+    });
   }
 }
