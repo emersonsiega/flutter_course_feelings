@@ -1,15 +1,15 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_course_feelings/blocs/novo_sentimento_bloc.dart';
 
 class PensamentosPage extends StatefulWidget {
-  final Function addDescricao;
-
-  PensamentosPage({this.addDescricao});
-
   @override
   _PensamentosPageState createState() => _PensamentosPageState();
 }
 
 class _PensamentosPageState extends State<PensamentosPage> {
+  final _novoSentimentoBloc = BlocProvider.getBloc<NovoSentimentoBloc>();
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -25,7 +25,7 @@ class _PensamentosPageState extends State<PensamentosPage> {
                 labelText: "Pensamentos",
               ),
               onChanged: (text) {
-                widget.addDescricao(text);
+                _novoSentimentoBloc.addPensamentos(text);
               },
             ),
           ],

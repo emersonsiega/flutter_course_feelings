@@ -1,6 +1,7 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_course_feelings/blocs/sentimentos_bloc.dart';
 import 'package:flutter_course_feelings/model/sentimento.dart';
-import 'package:flutter_course_feelings/views/adicionar/adicionar_sentimento.dart';
 import 'package:flutter_course_feelings/widgets/sentimento_tile.dart';
 
 class SentimentosView extends StatefulWidget {
@@ -9,7 +10,7 @@ class SentimentosView extends StatefulWidget {
 }
 
 class _SentimentosViewState extends State<SentimentosView> {
-  List<Sentimento> _sentimentos = [];
+  final bloc = BlocProvider.getBloc<SentimentosBloc>();
 
   @override
   Widget build(BuildContext context) {
@@ -18,21 +19,29 @@ class _SentimentosViewState extends State<SentimentosView> {
         title: Text("Sentimentos"),
       ),
       body: Container(
-        child: ListView(
-          padding: EdgeInsets.symmetric(vertical: 32, horizontal: 16),
-          children: _sentimentos.isEmpty
-              ? [
-                  Text(
-                    "Nenhum sentimento anotado",
-                    style: Theme.of(context).textTheme.display1,
-                    textAlign: TextAlign.center,
-                  )
-                ]
-              : _sentimentos
+        child: StreamBuilder<List<Sentimento>>(
+          stream: bloc.sentimentosStream(),
+          initialData: [],
+          builder: (context, snapshot) {
+            if (snapshot.data.isEmpty) {
+              return Center(
+                child: Text(
+                  "Nenhum sentimento anotado",
+                  style: Theme.of(context).textTheme.display1,
+                  textAlign: TextAlign.center,
+                ),
+              );
+            }
+
+            return ListView(
+              padding: EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+              children: snapshot.data
                   .map((sentimento) => SentimentoTile(
                         sentimento: sentimento,
                       ))
                   .toList(),
+            );
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -49,7 +58,7 @@ class _SentimentosViewState extends State<SentimentosView> {
                 Icons.delete,
                 color: Colors.white,
               ),
-              onPressed: _removeSentimento,
+              onPressed: bloc.removeSentimentos,
             ),
           ],
         ),
@@ -57,26 +66,7 @@ class _SentimentosViewState extends State<SentimentosView> {
     );
   }
 
-  void _insertSentimento(Sentimento sentimento) {
-    setState(() {
-      _sentimentos.add(sentimento);
-    });
-  }
-
   void _addSentimento() {
-    //Chama página para criar um Sentimento e envia o método de adicionar sentimentos...
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => AdicionarSentimento(
-          addSentimento: _insertSentimento,
-        ),
-      ),
-    );
-  }
-
-  void _removeSentimento() {
-    setState(() {
-      _sentimentos = [];
-    });
+    Navigator.of(context).pushNamed("/novo");
   }
 }

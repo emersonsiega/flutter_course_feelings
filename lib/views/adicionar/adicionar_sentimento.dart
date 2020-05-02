@@ -1,20 +1,17 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_course_feelings/blocs/novo_sentimento_bloc.dart';
+import 'package:flutter_course_feelings/blocs/sentimentos_bloc.dart';
 import 'package:flutter_course_feelings/model/sentimento.dart';
-import 'package:flutter_course_feelings/model/tipo_sentimento.dart';
 import 'package:flutter_course_feelings/views/adicionar/pages/pensamentos_page.dart';
 import 'package:flutter_course_feelings/views/adicionar/pages/tipo_sentimento_page.dart';
 
 class AdicionarSentimento extends StatefulWidget {
-  final Function addSentimento;
-
-  AdicionarSentimento({this.addSentimento});
-
   @override
   _AdicionarSentimentoState createState() => _AdicionarSentimentoState();
 }
 
 class _AdicionarSentimentoState extends State<AdicionarSentimento> {
-  Sentimento _sentimento;
   PageController _controller;
   bool _firstPage;
 
@@ -22,7 +19,6 @@ class _AdicionarSentimentoState extends State<AdicionarSentimento> {
   void initState() {
     super.initState();
     _firstPage = true;
-    _sentimento = Sentimento(tipoSentimento: TipoSentimento.FELIZ);
     _controller = PageController(initialPage: 0, keepPage: true);
     _controller.addListener(_onChangePage);
   }
@@ -31,18 +27,6 @@ class _AdicionarSentimentoState extends State<AdicionarSentimento> {
   void dispose() {
     super.dispose();
     _controller.removeListener(_onChangePage);
-  }
-
-  void _addTipoSentimento(TipoSentimento tipo) {
-    setState(() {
-      _sentimento.tipoSentimento = tipo;
-    });
-  }
-
-  void _addPensamentos(String text) {
-    setState(() {
-      _sentimento.pensamentos = text;
-    });
   }
 
   void _onChangePage() {
@@ -73,31 +57,34 @@ class _AdicionarSentimentoState extends State<AdicionarSentimento> {
           controller: _controller,
           physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
-            TipoSentimentoPage(
-              addTipoSentimento: _addTipoSentimento,
-            ),
-            PensamentosPage(
-              addDescricao: _addPensamentos,
-            ),
+            TipoSentimentoPage(),
+            PensamentosPage(),
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            if (_firstPage) {
-              _controller.nextPage(
-                duration: Duration(milliseconds: 280),
-                curve: Curves.easeInOut,
-              );
-            } else {
-              if (_sentimento.pensamentos.isNotEmpty) {
-                widget.addSentimento(_sentimento);
-                Navigator.of(context).pop();
-              }
-            }
-          },
+          onPressed: _onSave,
           child: _firstPage ? Icon(Icons.fast_forward) : Icon(Icons.check),
         ),
       ),
     );
+  }
+
+  void _onSave() {
+    if (_firstPage) {
+      _controller.nextPage(
+        duration: Duration(milliseconds: 280),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      final novoSentimentoBloc = BlocProvider.getBloc<NovoSentimentoBloc>();
+      Sentimento sentimento = novoSentimentoBloc.getSentimento();
+
+      if (sentimento.pensamentos != null && sentimento.pensamentos.isNotEmpty) {
+        final sentimentosBloc = BlocProvider.getBloc<SentimentosBloc>();
+        sentimentosBloc.addSentimento(sentimento);
+
+        Navigator.of(context).pop();
+      }
+    }
   }
 }
